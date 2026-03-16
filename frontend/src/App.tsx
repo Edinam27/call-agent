@@ -1,0 +1,179 @@
+import { useState, useEffect, useRef } from "react";
+import { Paperclip, Mic, CornerDownLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  ChatBubble,
+  ChatBubbleAvatar,
+  ChatBubbleMessage,
+} from "@/components/ui/chat-bubble";
+import { ChatMessageList } from "@/components/ui/chat-message-list";
+import { ChatInput } from "@/components/ui/chat-input";
+
+interface Message {
+  id: number;
+  content: string;
+  sender: "user" | "assistant";
+}
+
+function App() {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 1,
+      content: "Hello! I am Abena from UPSA School of Graduate Studies. How can I help you today?",
+      sender: "assistant",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const sessionIdRef = useRef(`session-${Math.random().toString(36).substring(7)}`);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const userMessage: Message = {
+      id: Date.now(),
+      content: input,
+      sender: "user",
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: userMessage.content,
+          session_id: sessionIdRef.current,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          content: data.reply,
+          sender: "assistant",
+        },
+      ]);
+    } catch (error) {
+      console.error("Error:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          content: "Sorry, I encountered an error connecting to the server.",
+          sender: "assistant",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+      <div className="w-full max-w-md h-[600px] border bg-background rounded-lg flex flex-col shadow-xl">
+        <div className="p-4 border-b bg-white rounded-t-lg">
+          <h1 className="font-semibold text-lg">UPSA SOGS - Abena</h1>
+          <p className="text-xs text-muted-foreground">AI Admissions Assistant</p>
+        </div>
+        
+        <div className="flex-1 overflow-hidden bg-gray-50/50">
+          <ChatMessageList>
+            {messages.map((message) => (
+              <ChatBubble
+                key={message.id}
+                variant={message.sender === "user" ? "sent" : "received"}
+              >
+                <ChatBubbleAvatar
+                  className="h-8 w-8 shrink-0"
+                  src={
+                    message.sender === "user"
+                      ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&h=64&q=80&crop=faces&fit=crop"
+                      : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
+                  }
+                  fallback={message.sender === "user" ? "US" : "AI"}
+                />
+                <ChatBubbleMessage
+                  variant={message.sender === "user" ? "sent" : "received"}
+                >
+                  {message.content}
+                </ChatBubbleMessage>
+              </ChatBubble>
+            ))}
+
+            {isLoading && (
+              <ChatBubble variant="received">
+                <ChatBubbleAvatar
+                  className="h-8 w-8 shrink-0"
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
+                  fallback="AI"
+                />
+                <ChatBubbleMessage isLoading />
+              </ChatBubble>
+            )}
+          </ChatMessageList>
+        </div>
+
+        <div className="p-4 border-t bg-white rounded-b-lg">
+          <form
+            onSubmit={handleSubmit}
+            className="relative rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring p-1"
+          >
+            <ChatInput
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="min-h-12 resize-none rounded-lg bg-background border-0 p-3 shadow-none focus-visible:ring-0"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+            />
+            <div className="flex items-center p-3 pt-0 justify-between">
+              <div className="flex">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  type="button"
+                  disabled
+                >
+                  <Paperclip className="size-4" />
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  type="button"
+                  disabled
+                >
+                  <Mic className="size-4" />
+                </Button>
+              </div>
+              <Button type="submit" size="sm" className="ml-auto gap-1.5" disabled={!input.trim() || isLoading}>
+                Send Message
+                <CornerDownLeft className="size-3.5" />
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
