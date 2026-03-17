@@ -145,7 +145,7 @@ function App() {
                 <ChatBubbleMessage
                   variant={message.sender === "user" ? "sent" : "received"}
                 >
-                  <div className={`prose prose-sm max-w-none break-words ${message.sender === "user" ? "prose-invert text-primary-foreground" : "dark:prose-invert text-foreground"}`}>
+                  <div className={`prose prose-sm max-w-none break-words ${message.sender === "user" ? "prose-invert text-primary-foreground" : "text-gray-900 dark:text-gray-100 prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-p:text-gray-900 dark:prose-p:text-gray-100 prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-ul:text-gray-900 dark:prose-ul:text-gray-100 prose-ol:text-gray-900 dark:prose-ol:text-gray-100"}`}>
                     <ReactMarkdown 
                       remarkPlugins={[remarkGfm]}
                       components={{

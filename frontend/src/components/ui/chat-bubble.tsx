@@ -51,7 +51,7 @@ export function ChatBubbleMessage({
         "rounded-lg p-3",
         variant === "sent" 
           ? "bg-primary text-primary-foreground" 
-          : "bg-neutral-200 dark:bg-neutral-800 text-foreground",
+          : "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100",
         className
       )}
     >
