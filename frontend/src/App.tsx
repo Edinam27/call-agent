@@ -119,14 +119,14 @@ function App() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full max-w-md h-[600px] border bg-background rounded-lg flex flex-col shadow-xl">
-        <div className="p-4 border-b bg-white rounded-t-lg">
-          <h1 className="font-semibold text-lg">UPSA SOGS - Kojo</h1>
+    <div className="flex items-center justify-center min-h-screen bg-muted/30 p-4">
+      <div className="w-full max-w-md h-[600px] border border-border bg-card text-card-foreground rounded-lg flex flex-col shadow-xl">
+        <div className="p-4 border-b border-border bg-muted/20 rounded-t-lg">
+          <h1 className="font-semibold text-lg text-foreground">UPSA SOGS - Kojo</h1>
           <p className="text-xs text-muted-foreground">AI Admissions Assistant</p>
         </div>
         
-        <div className="flex-1 overflow-hidden bg-gray-50/50">
+        <div className="flex-1 overflow-hidden bg-background">
           <ChatMessageList>
             {messages.map((message) => (
               <ChatBubble
@@ -145,7 +145,7 @@ function App() {
                 <ChatBubbleMessage
                   variant={message.sender === "user" ? "sent" : "received"}
                 >
-                  <div className="prose prose-sm dark:prose-invert max-w-none break-words">
+                  <div className={`prose prose-sm max-w-none break-words ${message.sender === "user" ? "prose-invert text-primary-foreground" : "dark:prose-invert text-foreground"}`}>
                     <ReactMarkdown 
                       remarkPlugins={[remarkGfm]}
                       components={{
@@ -177,16 +177,16 @@ function App() {
           </ChatMessageList>
         </div>
 
-        <div className="p-4 border-t bg-white rounded-b-lg">
+        <div className="p-4 border-t border-border bg-card rounded-b-lg">
           <form
             onSubmit={handleSubmit}
-            className="relative rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring p-1"
+            className="relative rounded-lg border border-border bg-background focus-within:ring-1 focus-within:ring-ring p-1"
           >
             <ChatInput
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="min-h-12 resize-none rounded-lg bg-background border-0 p-3 shadow-none focus-visible:ring-0"
+              className="min-h-12 resize-none rounded-lg bg-background text-foreground border-0 p-3 shadow-none focus-visible:ring-0"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
