@@ -8,13 +8,20 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
-    # Fallback for local testing if no Neon URL provided, but ideally should be provided
-    # Note: sqlite doesn't support async easily without aiosqlite, but for now we assume DATABASE_URL is set
-    # or we fail gracefully.
+    # Fallback for local testing if no Neon URL provided
     print("WARNING: DATABASE_URL not set. Database features will fail.")
-    DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+    # On Vercel, sqlite cannot be written to reliably, but we need a dummy string
+    # if it's not provided to avoid crash on startup before env vars are loaded.
+    DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
-engine = create_async_engine(DATABASE_URL, echo=True)
+# Important: connection pooling settings for serverless
+engine = create_async_engine(
+    DATABASE_URL, 
+    echo=False,
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=10
+)
 
 AsyncSessionLocal = sessionmaker(
     bind=engine,

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, Request, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, Request, HTTPException, Response
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +13,7 @@ from .models import Conversation, Lead
 from .schemas import ChatRequest, ChatResponse, CallAnalysis
 from .llm_service import LLMService
 
-app = FastAPI(title="UPSA SOGS AI Agent - Abena")
+app = FastAPI(title="UPSA SOGS AI Agent - Kojo")
 
 app.add_middleware(
     CORSMiddleware,
@@ -33,9 +33,13 @@ if os.path.exists(frontend_dist):
 
 @app.on_event("startup")
 async def startup():
-    # Create tables
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # In a serverless environment (Vercel), we should be careful with DB creation on every boot.
+    # It's better to run migrations (Alembic) separately, but for this project:
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as e:
+        print(f"DB Startup Error: {e}")
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -92,10 +96,22 @@ async def analyze_conversation(session_id: str, db: AsyncSession = Depends(get_d
     analysis_data = await llm_service.analyze_call(transcript)
     
     # Save to Leads table
-    # Check if lead exists for this session (assuming one lead per session for simplicity)
-    # In reality, leads are tied to phone numbers, not sessions.
+    # We use session_id as the phone_number identifier for chat, or actual caller_id for Twilio
+    result_lead = await db.execute(select(Lead).where(Lead.phone_number == session_id))
+    lead = result_lead.scalars().first()
     
-    # Just return the analysis for now
+    if not lead:
+        lead = Lead(phone_number=session_id)
+        db.add(lead)
+        
+    # Update lead fields with extracted data
+    for key, value in analysis_data.items():
+        if hasattr(lead, key) and value:
+            setattr(lead, key, value)
+            
+    await db.commit()
+    await db.refresh(lead)
+    
     return CallAnalysis(**analysis_data)
 
 @app.post("/voice/incoming")
@@ -123,7 +139,7 @@ async def voice_incoming(request: Request, db: AsyncSession = Depends(get_db)):
     response = VoiceResponse()
     
     # Initial Greeting
-    greeting = "Good day. Thank you for calling the University of Professional Studies, Accra — School of Graduate Studies. My name is Abena. How may I assist you today?"
+    greeting = "Good day. Thank you for calling the University of Professional Studies, Accra — School of Graduate Studies. My name is Kojo. How may I assist you today?"
     
     # Gather speech input
     gather = Gather(input="speech", action="/voice/respond", method="POST", language="en-GB", speechTimeout="auto")
@@ -191,6 +207,45 @@ async def voice_respond(request: Request, db: AsyncSession = Depends(get_db)):
     
     return HTMLResponse(content=str(response), media_type="application/xml")
 
+
+@app.post("/voice/status")
+async def voice_status(request: Request, db: AsyncSession = Depends(get_db)):
+    """
+    Twilio Webhook for Call Status changes (e.g., completed).
+    Triggers lead extraction and CRM update when the call ends.
+    """
+    form_data = await request.form()
+    call_sid = form_data.get("CallSid")
+    call_status = form_data.get("CallStatus")
+    caller = form_data.get("From")
+    
+    if call_status == "completed" and call_sid:
+        # Retrieve conversation history
+        result = await db.execute(select(Conversation).where(Conversation.session_id == call_sid))
+        conversation = result.scalars().first()
+        
+        if conversation and conversation.history:
+            transcript = "\n".join([f"{msg['role'].upper()}: {msg['content']}" for msg in conversation.history])
+            
+            # Analyze conversation
+            analysis_data = await llm_service.analyze_call(transcript)
+            
+            # Update Lead in Database
+            result_lead = await db.execute(select(Lead).where(Lead.phone_number == caller))
+            lead = result_lead.scalars().first()
+            
+            if not lead:
+                lead = Lead(phone_number=caller)
+                db.add(lead)
+                
+            for key, value in analysis_data.items():
+                if hasattr(lead, key) and value:
+                    setattr(lead, key, value)
+                    
+            await db.commit()
+            print(f"Lead updated for caller {caller}: {analysis_data}")
+            
+    return Response(status_code=200)
 
 @app.websocket("/voice/stream")
 async def voice_stream(websocket: WebSocket):

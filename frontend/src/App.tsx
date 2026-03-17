@@ -19,13 +19,45 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      content: "Hello! I am Abena from UPSA School of Graduate Studies. How can I help you today?",
+      content: "Hello! I am Kojo from UPSA School of Graduate Studies. How can I help you today?",
       sender: "assistant",
     },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const sessionIdRef = useRef(`session-${Math.random().toString(36).substring(7)}`);
+
+  const handleMicrophoneClick = () => {
+    if (!('webkitSpeechRecognition' in window)) {
+      alert("Speech recognition is not supported in this browser. Please use Chrome.");
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SpeechRecognition = (window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +118,7 @@ function App() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-md h-[600px] border bg-background rounded-lg flex flex-col shadow-xl">
         <div className="p-4 border-b bg-white rounded-t-lg">
-          <h1 className="font-semibold text-lg">UPSA SOGS - Abena</h1>
+          <h1 className="font-semibold text-lg">UPSA SOGS - Kojo</h1>
           <p className="text-xs text-muted-foreground">AI Admissions Assistant</p>
         </div>
         
@@ -159,7 +191,8 @@ function App() {
                   variant="ghost"
                   size="icon"
                   type="button"
-                  disabled
+                  onClick={handleMicrophoneClick}
+                  className={isListening ? "text-red-500 animate-pulse" : ""}
                 >
                   <Mic className="size-4" />
                 </Button>
