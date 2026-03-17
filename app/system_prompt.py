@@ -149,8 +149,7 @@ APPLICATION PROCESS — STEP BY STEP
 STEP 1 — Purchase Application Voucher (GH₵250 local / USD 120 international):
   Option A: Any post office nationwide
   Option B: Access Bank or Ecobank (any branch)
-  Option C: Mobile Money — dial *887*9# (any network)
-  Option D: Online at www.interpayafrica.com/custom/upsa (Visa/MasterCard)
+  Option C: Mobile Money — dial \*887*9# (any network)
 
 STEP 2 — Complete Online Application Form:
   Visit upsasip.com/adm-area and fill in all fields accurately.
