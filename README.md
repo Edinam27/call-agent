@@ -43,31 +43,36 @@ This is an AI Call & Chat Agent for the University of Professional Studies, Accr
     ```
     Access the Chat UI at `http://localhost:8000`.
 
-## Deployment to Vercel
+## Deployment
 
-This application is configured as a **monorepo** where Vercel serves the React frontend statically and hosts the FastAPI backend as Serverless Functions.
+### Option 1: Render (Recommended for Best Performance)
 
-### Framework Preset
-When importing the repository in Vercel, use the **Vite** framework preset. Vercel will automatically detect the `frontend/` folder for the build, but you need to override the commands to ensure both frontend and backend work together.
+Render is highly recommended for this project because it runs a long-standing server, avoiding the database connection pooling limits and function timeouts associated with Vercel's serverless architecture. 
 
-### Vercel Project Settings
-In your Vercel project settings, configure the following:
+This project includes a `render.yaml` file for **1-click deployment**.
 
-1. **Build & Development Settings**:
-   - **Framework Preset**: `Vite`
-   - **Build Command**: `cd frontend && npm install && npm run build`
-   - **Output Directory**: `frontend/dist`
-   - **Install Command**: `npm install`
+1. Push your code to GitHub.
+2. Go to [Render](https://dashboard.render.com/) and click **New+** -> **Blueprint**.
+3. Connect your GitHub repository. Render will automatically detect the `render.yaml` configuration.
+4. Fill in the required environment variables in the Render dashboard (`OPENAI_API_KEY`, `DATABASE_URL`).
+5. Click **Apply**. Render will automatically run `build.sh` (which builds both Python and React) and start the Uvicorn server.
 
-2. **Environment Variables**:
-   Add the following variables to your Vercel project:
-   - `OPENAI_API_KEY`
-   - `DATABASE_URL`
+### Option 2: Vercel (Serverless)
+
+This application is configured as a monorepo for Vercel, utilizing `vercel.json` to handle routing.
+
+**Vercel Project Settings:**
+1. Import your GitHub repository to Vercel.
+2. Leave the Framework Preset as **Other** (do NOT select Vite).
+3. Set the **Build Command** to: `cd frontend && npm install && npm run build`
+4. Set the **Output Directory** to: `frontend/dist`
+5. Set the **Install Command** to: `pip install -r requirements.txt` (Vercel uses `vercel.json` for Python but sometimes requires this).
+6. Add your Environment Variables (`OPENAI_API_KEY`, `DATABASE_URL`).
 
 ### How it works on Vercel
 - The `vercel.json` file routes all API traffic (`/chat`, `/voice/*`) to `api/index.py`.
 - `api/index.py` exposes the FastAPI app to Vercel's Python runtime.
-- The `frontend/dist` folder is served as the static frontend.
+- The React application is built via the static-build step and handled by the catch-all routing.
 
 ## Twilio Voice Setup
 

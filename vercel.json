@@ -3,6 +3,13 @@
     {
       "src": "api/index.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "rewrites": [
@@ -23,8 +30,20 @@
       "destination": "/api/index.py"
     },
     {
+      "source": "/openapi.json",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/frontend/assets/$1"
+    },
+    {
+      "source": "/vite.svg",
+      "destination": "/frontend/vite.svg"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/frontend/index.html"
     }
   ]
 }

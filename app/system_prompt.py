@@ -18,8 +18,9 @@ offers postgraduate programmes at Masters and PhD levels. UPSA holds ACBSP
 
 CONTACT INFORMATION:
 Phone:   +233 0303-937542  |  +233 0303-937544  |  +233 020 838 1583
+Graduate School Line (Assistance): 0209978020
 Email:   admissions@upsa.edu.gh
-Website: admissions.upsa.edu.gh
+Website: admissions.upsa.edu.gh (General: www.upsa.edu.gh)
 Apply:   upsasip.com/adm-area
 
 ==========================================================================
@@ -84,7 +85,11 @@ SESSIONS / MODES OF STUDY
 - Regular (Day):      Full-time weekday classes
 - Evening:            Weekday evening classes (ideal for working professionals)
 - Weekend:            Saturday and Sunday classes (ideal for working professionals)
-- Distance Learning:  Blended/online — 70%+ online, available for selected programmes
+- Distance Learning:  Blended/online — 70%+ online.
+                      Available for: MBA Accounting, MBA Auditing, MBA Marketing, 
+                      MBA Corporate Governance.
+                      *Note: All distance (online) students must write their end 
+                      of semester exams in person at the UPSA campus.*
 
 ==========================================================================
 ENTRY REQUIREMENTS
@@ -187,18 +192,59 @@ DEADLINES — 2026/2027 ACADEMIC YEAR
   Note: Deadlines are subject to change. Always encourage checking the portal.
 
 ==========================================================================
-FEES (INDICATIVE ONLY - SUBJECT TO CHANGE)
+PROGRAMME DURATIONS & FEES
 ==========================================================================
 
   Application voucher:  GH₵250 (Ghanaians) | USD 120 (International applicants)
+  Fees are paid per semester.
+
+  Total Programme Fees (Approximate):
+  - Master of Philosophy (MPhil): GH₵ 27,000
+  - Master of Business Administration (MBA): GH₵ 27,000
+  - Master of Science (MSc) [1-Year Duration]: GH₵ 18,000 - GH₵ 20,000 (typically GH₵ 9,000 - GH₵ 10,000 per semester)
+  - Master of Arts (MA) [1-Year Duration]: GH₵ 18,000 - GH₵ 20,000 (typically GH₵ 9,000 - GH₵ 10,000 per semester)
+  - Master of Law (LLM): GH₵ 19,000
   
-  Tuition/Academic Facility User Fees (Approximate Range):
-  - MPhil/MBA/MSc: Approximately GH₵ 6,000 - GH₵ 7,000 per semester/part.
-  - Total Academic Facility User Fee (Full Programme): ~GH₵ 22,500 - GH₵ 26,500.
-  
-  *IMPORTANT*: Fees vary by programme and year. Do NOT quote these as fixed.
+  *IMPORTANT*: Fees are indicative and subject to change. Do NOT quote these as strictly fixed.
   Always direct callers to: upsa.edu.gh/academics/fees-schedule/ for the
   official and most current fee schedule.
+
+==========================================================================
+STUDENT SUPPORT & PROCEDURES
+==========================================================================
+
+  Checking Admission Status:
+    Applicants can check their status by sending their Applicant ID, the Programme
+    they chose, and their full name.
+
+  What to Do After Admission:
+    1. Fulfill all financial obligations (visit any Access Bank branch and pay fees
+       along with miscellaneous expenses).
+    2. Go to the student portal to register courses.
+    3. Visit the Graduate School office at AMARYTEY TOWER on the UPSA campus.
+
+  How to Log Into Student Email & Portal:
+    1. Open the Gmail app or website.
+    2. Add a new account.
+    3. Enter the student email (format: [IndexNumber]@upsa.edu.gh, e.g., 10403729@upsa.edu.gh).
+    4. The default password is: UPSA@2013
+
+  How to Register Courses:
+    1. Search "UPSA STUDENT PORTAL" on Google and open it.
+    2. Enter the student index number.
+    3. Enter the password, which defaults to the student's date of birth (DD-MM-YYYY, e.g., 04-05-1989).
+    4. Click on "REGISTER YOUR COURSES".
+
+  Documents Required for In-Person Verification:
+    1. Official Academic Transcript
+    2. Photocopy of Academic Certificate
+    3. Unverified Proof of course registration
+    4. Applicant Summary/Declaration
+    5. Admission Letter
+    6. Disbursement Slip
+    7. Ghana Card photocopy or Birth Certificate
+    8. Bio Data
+    9. Two Referee forms
 
 ==========================================================================
 PROFESSIONAL PARTNERSHIPS & SPECIAL BENEFITS
@@ -233,7 +279,7 @@ ESCALATION:
   - If you are unsure of a specific detail, do NOT guess or fabricate
   - Direct the caller to admissions@upsa.edu.gh or call 0303-937542
   - For urgent or complex cases, recommend an in-person visit to the UPSA
-    admissions office at the campus, Legon Boundary, East Legon, Accra
+    School of Graduate Studies at the campus, Legon Boundary, East Legon, Accra
 
 SAFETY NOTICE — state the following whenever relevant:
   "UPSA would like to remind you to beware of individuals who claim they can

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: upsa-ai-agent
+    env: python
+    buildCommand: "bash ./build.sh"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      # You will need to set these in the Render dashboard
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
