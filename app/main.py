@@ -28,27 +28,6 @@ llm_service = LLMService()
 # Serve static files from the frontend build directory
 frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
 
-if os.path.exists(frontend_dist):
-    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
-    
-    # Catch-all route to serve the React SPA
-    @app.api_route("/{path_name:path}", methods=["GET"])
-    async def catch_all(path_name: str):
-        # Exclude API routes from the catch-all
-        api_routes = ["chat", "analyze", "voice", "docs", "openapi.json"]
-        if any(path_name.startswith(route) for route in api_routes):
-            raise HTTPException(status_code=404, detail="API Route Not Found")
-            
-        # Check if it's a specific static file (like vite.svg)
-        file_path = os.path.join(frontend_dist, path_name)
-        if os.path.isfile(file_path):
-            return FileResponse(file_path)
-            
-        # Otherwise, serve index.html (SPA routing)
-        index_path = os.path.join(frontend_dist, "index.html")
-        if os.path.exists(index_path):
-            return FileResponse(index_path)
-        return JSONResponse(status_code=404, content={"message": "Frontend not found"})
 
 @app.on_event("startup")
 async def startup():
@@ -286,3 +265,36 @@ async def voice_stream(websocket: WebSocket):
                 
     except WebSocketDisconnect:
         print("WebSocket disconnected")
+
+# Serve static files from the frontend build directory
+# This must be defined AFTER all API routes to avoid shadowing them
+if os.path.exists(frontend_dist):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+
+    @app.get("/")
+    async def serve_index():
+        """Serve the React app root"""
+        index_path = os.path.join(frontend_dist, "index.html")
+        if os.path.exists(index_path):
+            return FileResponse(index_path)
+        return JSONResponse(status_code=404, content={"message": "Frontend not found"})
+
+    # Catch-all route to serve the React SPA for client-side routing
+    @app.api_route("/{path_name:path}", methods=["GET"])
+    async def catch_all(path_name: str):
+        """Serve static files or index.html for SPA routing"""
+        # Exclude API routes from the catch-all
+        api_routes = ["chat", "analyze", "voice", "docs", "openapi.json"]
+        if any(path_name.startswith(route) for route in api_routes):
+            raise HTTPException(status_code=404, detail="API Route Not Found")
+            
+        # Check if it's a specific static file (like vite.svg)
+        file_path = os.path.join(frontend_dist, path_name)
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+            
+        # Otherwise, serve index.html (SPA routing)
+        index_path = os.path.join(frontend_dist, "index.html")
+        if os.path.exists(index_path):
+            return FileResponse(index_path)
+        return JSONResponse(status_code=404, content={"message": "Frontend not found"})
