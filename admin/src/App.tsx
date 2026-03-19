@@ -13,8 +13,28 @@ import axios from 'axios';
 // Get API URL from env, or default to backend URL
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+interface Issue {
+  topic: string;
+  count: number;
+}
+
+interface Activity {
+  id: number | string;
+  type: string;
+  detail: string;
+  time: string;
+}
+
+interface Stats {
+  totalCalls: number;
+  totalLeads: number;
+  commonIssues: Issue[];
+  recentActivity: Activity[];
+  insight: string;
+}
+
 export default function Dashboard() {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<Stats>({
     totalCalls: 0,
     totalLeads: 0,
     commonIssues: [],
