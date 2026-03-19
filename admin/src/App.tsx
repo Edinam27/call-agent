@@ -6,7 +6,7 @@ import Conversations from './pages/Conversations';
 
 export default function App() {
   return (
-    <Router basename="/admin">
+    <Router>
       <Layout>
         <Routes>
           <Route path="/" element={<Overview />} />
