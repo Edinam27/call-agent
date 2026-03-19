@@ -25,6 +25,41 @@ app.add_middleware(
 
 llm_service = LLMService()
 
+@app.get("/api/admin/leads")
+async def get_admin_leads(db: AsyncSession = Depends(get_db)):
+    """Fetch all leads for the admin dashboard"""
+    result = await db.execute(select(Lead).order_by(Lead.id.desc()))
+    leads = result.scalars().all()
+    
+    return [
+        {
+            "id": lead.id,
+            "name": lead.name,
+            "contact_info": lead.contact_info,
+            "program_of_interest": lead.program_of_interest,
+            "highest_degree": lead.highest_degree,
+            # If created_at doesn't exist on model, we'll return a static string or omit it
+            "created_at": getattr(lead, 'created_at', 'Recent').isoformat() if hasattr(lead, 'created_at') and getattr(lead, 'created_at') else "Recent"
+        }
+        for lead in leads
+    ]
+
+@app.get("/api/admin/conversations")
+async def get_admin_conversations(db: AsyncSession = Depends(get_db)):
+    """Fetch all conversations for the admin dashboard"""
+    result = await db.execute(select(Conversation).order_by(Conversation.id.desc()))
+    conversations = result.scalars().all()
+    
+    return [
+        {
+            "id": convo.id,
+            "session_id": convo.session_id,
+            "history": convo.history,
+            "created_at": getattr(convo, 'created_at', 'Recent').isoformat() if hasattr(convo, 'created_at') and getattr(convo, 'created_at') else "Recent"
+        }
+        for convo in conversations
+    ]
+
 # Serve static files from the frontend build directory
 frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
 
