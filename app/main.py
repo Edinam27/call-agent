@@ -277,13 +277,24 @@ assets_dir = os.path.join(frontend_dist, "assets")
 os.makedirs(assets_dir, exist_ok=True)
 app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def serve_index():
     """Serve the React app root"""
     index_path = os.path.join(frontend_dist, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-    return JSONResponse(status_code=404, content={"message": "Frontend index.html not found at " + index_path})
+    
+    # Render debug info
+    files = []
+    if os.path.exists(frontend_dist):
+        files = os.listdir(frontend_dist)
+    
+    return JSONResponse(status_code=404, content={
+        "message": "Frontend index.html not found", 
+        "path": index_path,
+        "frontend_dir_exists": os.path.exists(frontend_dist),
+        "files_in_dist": files
+    })
 
 # Catch-all route to serve the React SPA for client-side routing
 @app.api_route("/{path_name:path}", methods=["GET"])
