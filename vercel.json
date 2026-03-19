@@ -10,9 +10,20 @@
       "config": {
         "distDir": "dist"
       }
+    },
+    {
+      "src": "admin/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
     {
       "source": "/chat",
       "destination": "/api/index.py"
@@ -34,12 +45,20 @@
       "destination": "/api/index.py"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "/frontend/assets/$1"
+      "source": "/admin/assets/(.*)",
+      "destination": "/admin/assets/$1"
     },
     {
-      "source": "/vite.svg",
-      "destination": "/frontend/vite.svg"
+      "source": "/admin/(.*)",
+      "destination": "/admin/index.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/index.html"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/frontend/assets/$1"
     },
     {
       "source": "/(.*)",

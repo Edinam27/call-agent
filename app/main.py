@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update, func
 from typing import List, Dict, Any
 import json
 import os
@@ -266,6 +266,56 @@ async def voice_stream(websocket: WebSocket):
     except WebSocketDisconnect:
         print("WebSocket disconnected")
 
+@app.get("/api/admin/analytics")
+async def get_admin_analytics(db: AsyncSession = Depends(get_db)):
+    """Fetch analytics data for the admin dashboard"""
+    # Get total calls/conversations
+    calls_result = await db.execute(select(func.count(Conversation.id)))
+    total_calls = calls_result.scalar()
+
+    # Get total leads
+    leads_result = await db.execute(select(func.count(Lead.id)))
+    total_leads = leads_result.scalar()
+
+    # Get recent activity (mix of recent leads and conversations)
+    recent_leads = await db.execute(select(Lead).order_by(Lead.id.desc()).limit(5))
+    leads = recent_leads.scalars().all()
+    
+    activity = []
+    for lead in leads:
+        activity.append({
+            "id": f"lead-{lead.id}",
+            "type": "Lead Generated",
+            "detail": f"{lead.program_of_interest or 'Unknown Program'}",
+            "time": "Recent" # Would use actual timestamp if added to model
+        })
+
+    # Get recent conversations for LLM analysis
+    recent_convos = await db.execute(select(Conversation).order_by(Conversation.id.desc()).limit(10))
+    convos = recent_convos.scalars().all()
+    
+    transcripts = []
+    for c in convos:
+        if c.history:
+            # Format history into a readable transcript
+            transcript = "\n".join([f"{msg.get('role', 'unknown')}: {msg.get('content', '')}" for msg in c.history])
+            transcripts.append(transcript)
+            
+    # Generate insights using LLM
+    insights_data = await llm_service.generate_admin_insights(transcripts)
+
+    return {
+        "totalCalls": total_calls or 0,
+        "totalLeads": total_leads or 0,
+        "commonIssues": insights_data.get("top_issues", [
+            {"topic": "Admissions Process", "count": min(15, total_calls)},
+            {"topic": "Fees & Scholarships", "count": min(12, total_calls)},
+            {"topic": "Program Requirements", "count": min(8, total_calls)}
+        ]),
+        "recentActivity": activity,
+        "insight": insights_data.get("insight", "Gathering more data for insights...")
+    }
+
 # Serve static files from the frontend build directory
 # We remove the `if os.path.exists(frontend_dist):` check so that FastAPI 
 # ALWAYS registers these routes, even if the directory isn't created 
@@ -299,7 +349,7 @@ async def serve_index():
 async def catch_all(path_name: str):
     """Serve static files or index.html for SPA routing"""
     # Exclude API routes from the catch-all
-    api_routes = ["chat", "analyze", "voice", "docs", "openapi.json"]
+    api_routes = ["api", "chat", "analyze", "voice", "docs", "openapi.json"]
     if any(path_name.startswith(route) for route in api_routes):
         raise HTTPException(status_code=404, detail="API Route Not Found")
         
