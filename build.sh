@@ -7,10 +7,15 @@ pip install -r requirements.txt
 
 echo "Installing Node.js..."
 # Render uses nvm, make sure we have a recent node version
-if command -v nvm &> /dev/null; then
-    nvm install 18
-    nvm use 18
-fi
+# We must source nvm explicitly in non-interactive shells
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+nvm install 18
+nvm use 18
+
+echo "Node version: $(node -v)"
+echo "NPM version: $(npm -v)"
 
 echo "Building React frontend..."
 cd frontend
