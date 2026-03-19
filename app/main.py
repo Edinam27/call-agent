@@ -269,7 +269,10 @@ async def voice_stream(websocket: WebSocket):
 # Serve static files from the frontend build directory
 # This must be defined AFTER all API routes to avoid shadowing them
 if os.path.exists(frontend_dist):
-    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+    # Mount the assets directory directly
+    assets_dir = os.path.join(frontend_dist, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
     @app.get("/")
     async def serve_index():
@@ -277,7 +280,7 @@ if os.path.exists(frontend_dist):
         index_path = os.path.join(frontend_dist, "index.html")
         if os.path.exists(index_path):
             return FileResponse(index_path)
-        return JSONResponse(status_code=404, content={"message": "Frontend not found"})
+        return JSONResponse(status_code=404, content={"message": "Frontend index.html not found"})
 
     # Catch-all route to serve the React SPA for client-side routing
     @app.api_route("/{path_name:path}", methods=["GET"])
@@ -288,7 +291,7 @@ if os.path.exists(frontend_dist):
         if any(path_name.startswith(route) for route in api_routes):
             raise HTTPException(status_code=404, detail="API Route Not Found")
             
-        # Check if it's a specific static file (like vite.svg)
+        # Check if it's a specific static file (like vite.svg, robots.txt, etc)
         file_path = os.path.join(frontend_dist, path_name)
         if os.path.isfile(file_path):
             return FileResponse(file_path)
