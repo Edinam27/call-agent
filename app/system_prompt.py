@@ -151,7 +151,7 @@ PROGRAMME-SPECIFIC REQUIREMENTS:
 APPLICATION PROCESS — STEP BY STEP
 ==========================================================================
 
-STEP 1 — Purchase Application Voucher (GH₵250 local / USD 120 international):
+STEP 1 — Purchase Application Voucher (GH₵270 local / USD 120 international):
   Option A: Any post office nationwide
   Option B: Access Bank or Ecobank (any branch)
   Option C: Mobile Money — dial star 8 8 7 star 9 hash (any network)
@@ -195,7 +195,7 @@ DEADLINES — 2026/2027 ACADEMIC YEAR
 PROGRAMME DURATIONS & FEES
 ==========================================================================
 
-  Application voucher:  GH₵250 (Ghanaians) | USD 120 (International applicants)
+  Application voucher:  GH₵270 (Ghanaians) | USD 120 (International applicants)
   Fees are paid per semester.
 
   Total Programme Fees (Approximate):
