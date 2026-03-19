@@ -128,7 +128,7 @@ export default function Overview() {
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              {stats.commonIssues && stats.commonIssues.length > 0 ? (
+              {Array.isArray(stats.commonIssues) && stats.commonIssues.length > 0 ? (
                 stats.commonIssues.map((issue, idx) => (
                   <div key={idx}>
                     <div className="flex justify-between text-sm mb-1">
@@ -166,7 +166,7 @@ export default function Overview() {
           </div>
           <div className="flex-1 p-0 overflow-y-auto max-h-[400px]">
             <ul className="divide-y divide-border">
-              {stats.recentActivity && stats.recentActivity.length > 0 ? (
+              {Array.isArray(stats.recentActivity) && stats.recentActivity.length > 0 ? (
                 stats.recentActivity.map((activity) => (
                   <li key={activity.id} className="p-4 hover:bg-muted/50 transition-colors flex items-center justify-between">
                     <div className="flex items-center gap-4">

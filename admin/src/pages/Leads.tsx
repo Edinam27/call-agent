@@ -68,7 +68,7 @@ export default function Leads() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {leads && leads.length > 0 ? (
+              {Array.isArray(leads) && leads.length > 0 ? (
                 leads.map((lead) => (
                   <tr key={lead.id} className="hover:bg-muted/30 transition-colors">
                     <td className="p-4 text-sm font-medium text-muted-foreground">#{lead.id}</td>

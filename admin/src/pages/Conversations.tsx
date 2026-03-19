@@ -56,7 +56,7 @@ export default function Conversations() {
           </h2>
         </div>
         <div className="flex-1 overflow-y-auto p-2 space-y-2">
-          {conversations && conversations.length > 0 ? (
+          {Array.isArray(conversations) && conversations.length > 0 ? (
             conversations.map((convo) => {
               const isVoice = convo.session_id.startsWith('voice_');
               const messageCount = convo.history?.length || 0;
