@@ -35,11 +35,10 @@ async def get_admin_leads(db: AsyncSession = Depends(get_db)):
         {
             "id": lead.id,
             "name": lead.name,
-            "contact_info": lead.contact_info,
-            "program_of_interest": lead.program_of_interest,
-            "highest_degree": lead.highest_degree,
-            # If created_at doesn't exist on model, we'll return a static string or omit it
-            "created_at": getattr(lead, 'created_at', 'Recent').isoformat() if hasattr(lead, 'created_at') and getattr(lead, 'created_at') else "Recent"
+            "contact_info": lead.phone_number,
+            "program_of_interest": lead.program_interest,
+            "highest_degree": lead.degree_level,
+            "created_at": lead.created_at.isoformat() if lead.created_at else "Recent"
         }
         for lead in leads
     ]
@@ -55,7 +54,7 @@ async def get_admin_conversations(db: AsyncSession = Depends(get_db)):
             "id": convo.id,
             "session_id": convo.session_id,
             "history": convo.history,
-            "created_at": getattr(convo, 'created_at', 'Recent').isoformat() if hasattr(convo, 'created_at') and getattr(convo, 'created_at') else "Recent"
+            "created_at": convo.created_at.isoformat() if convo.created_at else "Recent"
         }
         for convo in conversations
     ]
@@ -321,7 +320,7 @@ async def get_admin_analytics(db: AsyncSession = Depends(get_db)):
         activity.append({
             "id": f"lead-{lead.id}",
             "type": "Lead Generated",
-            "detail": f"{lead.program_of_interest or 'Unknown Program'}",
+            "detail": f"{lead.program_interest or 'Unknown Program'}",
             "time": "Recent" # Would use actual timestamp if added to model
         })
 
