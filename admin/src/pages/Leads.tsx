@@ -68,48 +68,49 @@ export default function Leads() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {leads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="p-4 text-sm font-medium text-muted-foreground">#{lead.id}</td>
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center font-bold text-xs">
-                        {lead.name ? lead.name.charAt(0).toUpperCase() : '?'}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{lead.name || 'Unknown'}</p>
-                        <div className="flex items-center gap-1 mt-0.5">
-                          {lead.contact_info?.includes('@') ? (
-                            <Mail className="w-3 h-3 text-muted-foreground" />
-                          ) : (
-                            <Phone className="w-3 h-3 text-muted-foreground" />
-                          )}
-                          <p className="text-xs text-muted-foreground">{lead.contact_info || 'Not provided'}</p>
+              {leads && leads.length > 0 ? (
+                leads.map((lead) => (
+                  <tr key={lead.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="p-4 text-sm font-medium text-muted-foreground">#{lead.id}</td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center font-bold text-xs">
+                          {lead.name ? lead.name.charAt(0).toUpperCase() : '?'}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{lead.name || 'Unknown'}</p>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            {lead.contact_info?.includes('@') ? (
+                              <Mail className="w-3 h-3 text-muted-foreground" />
+                            ) : (
+                              <Phone className="w-3 h-3 text-muted-foreground" />
+                            )}
+                            <p className="text-xs text-muted-foreground">{lead.contact_info || 'Not provided'}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-secondary-foreground/10">
-                      <BookOpen className="w-3 h-3" />
-                      {lead.program_of_interest || 'Undecided'}
-                    </span>
-                  </td>
-                  <td className="p-4 text-sm text-foreground">
-                    {lead.highest_degree || 'Not specified'}
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                      <Clock className="w-3.5 h-3.5" />
-                      {new Date(lead.created_at).toLocaleDateString()}
-                    </div>
-                  </td>
-                  <td className="p-4 text-right">
-                    <button className="text-sm text-primary font-medium hover:underline">View</button>
-                  </td>
-                </tr>
-              ))}
-              {leads.length === 0 && (
+                    </td>
+                    <td className="p-4">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-secondary-foreground/10">
+                        <BookOpen className="w-3 h-3" />
+                        {lead.program_of_interest || 'Undecided'}
+                      </span>
+                    </td>
+                    <td className="p-4 text-sm text-foreground">
+                      {lead.highest_degree || 'Not specified'}
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        <Clock className="w-3.5 h-3.5" />
+                        {new Date(lead.created_at).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="p-4 text-right">
+                      <button className="text-sm text-primary font-medium hover:underline">View</button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
                   <td colSpan={6} className="p-8 text-center text-muted-foreground">
                     <div className="flex flex-col items-center justify-center space-y-3">

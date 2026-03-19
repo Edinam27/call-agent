@@ -56,42 +56,43 @@ export default function Conversations() {
           </h2>
         </div>
         <div className="flex-1 overflow-y-auto p-2 space-y-2">
-          {conversations.map((convo) => {
-            const isVoice = convo.session_id.startsWith('voice_');
-            const messageCount = convo.history?.length || 0;
-            const isSelected = selectedConvo?.id === convo.id;
-            
-            return (
-              <button
-                key={convo.id}
-                onClick={() => setSelectedConvo(convo)}
-                className={`w-full text-left p-4 rounded-lg border transition-all ${
-                  isSelected 
-                    ? 'bg-primary/5 border-primary shadow-sm' 
-                    : 'bg-background border-border hover:border-primary/50'
-                }`}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
-                    {isVoice ? <Phone className="w-3 h-3" /> : <Globe className="w-3 h-3" />}
-                    {isVoice ? 'Voice Call' : 'Web Chat'}
-                  </span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {new Date(convo.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="text-sm font-medium text-foreground truncate">
-                  {convo.session_id}
-                </div>
-                <div className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  {messageCount} messages
-                </div>
-              </button>
-            );
-          })}
-          {conversations.length === 0 && (
+          {conversations && conversations.length > 0 ? (
+            conversations.map((convo) => {
+              const isVoice = convo.session_id.startsWith('voice_');
+              const messageCount = convo.history?.length || 0;
+              const isSelected = selectedConvo?.id === convo.id;
+              
+              return (
+                <button
+                  key={convo.id}
+                  onClick={() => setSelectedConvo(convo)}
+                  className={`w-full text-left p-4 rounded-lg border transition-all ${
+                    isSelected 
+                      ? 'bg-primary/5 border-primary shadow-sm' 
+                      : 'bg-background border-border hover:border-primary/50'
+                  }`}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
+                      {isVoice ? <Phone className="w-3 h-3" /> : <Globe className="w-3 h-3" />}
+                      {isVoice ? 'Voice Call' : 'Web Chat'}
+                    </span>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {new Date(convo.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="text-sm font-medium text-foreground truncate">
+                    {convo.session_id}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    {messageCount} messages
+                  </div>
+                </button>
+              );
+            })
+          ) : (
             <div className="p-8 text-center text-muted-foreground text-sm">
               No conversations found.
             </div>

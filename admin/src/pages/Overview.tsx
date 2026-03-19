@@ -128,20 +128,24 @@ export default function Overview() {
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              {stats.commonIssues.map((issue, idx) => (
-                <div key={idx}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="font-medium text-foreground">{issue.topic}</span>
-                    <span className="text-muted-foreground">{issue.count} queries</span>
+              {stats.commonIssues && stats.commonIssues.length > 0 ? (
+                stats.commonIssues.map((issue, idx) => (
+                  <div key={idx}>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="font-medium text-foreground">{issue.topic}</span>
+                      <span className="text-muted-foreground">{issue.count} queries</span>
+                    </div>
+                    <div className="w-full bg-input rounded-full h-2">
+                      <div 
+                        className="bg-primary h-2 rounded-full transition-all duration-500" 
+                        style={{ width: `${Math.min((issue.count / Math.max(stats.totalCalls, 1)) * 100 * 2, 100)}%` }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="w-full bg-input rounded-full h-2">
-                    <div 
-                      className="bg-primary h-2 rounded-full transition-all duration-500" 
-                      style={{ width: `${Math.min((issue.count / Math.max(stats.totalCalls, 1)) * 100 * 2, 100)}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div className="text-sm text-muted-foreground text-center py-4">No issue data available yet.</div>
+              )}
             </div>
             <div className="mt-6 p-4 bg-secondary rounded-lg border border-border">
               <h3 className="text-sm font-semibold text-secondary-foreground mb-1 flex items-center gap-2">
@@ -162,21 +166,22 @@ export default function Overview() {
           </div>
           <div className="flex-1 p-0 overflow-y-auto max-h-[400px]">
             <ul className="divide-y divide-border">
-              {stats.recentActivity.map((activity) => (
-                <li key={activity.id} className="p-4 hover:bg-muted/50 transition-colors flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-2 rounded-full ${activity.type === 'Lead Generated' ? 'bg-accent text-accent-foreground' : 'bg-secondary text-secondary-foreground'}`}>
-                      {activity.type === 'Lead Generated' ? <Users className="w-4 h-4" /> : <MessageSquare className="w-4 h-4" />}
+              {stats.recentActivity && stats.recentActivity.length > 0 ? (
+                stats.recentActivity.map((activity) => (
+                  <li key={activity.id} className="p-4 hover:bg-muted/50 transition-colors flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-2 rounded-full ${activity.type === 'Lead Generated' ? 'bg-accent text-accent-foreground' : 'bg-secondary text-secondary-foreground'}`}>
+                        {activity.type === 'Lead Generated' ? <Users className="w-4 h-4" /> : <MessageSquare className="w-4 h-4" />}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{activity.type}</p>
+                        <p className="text-xs text-muted-foreground">{activity.detail}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{activity.type}</p>
-                      <p className="text-xs text-muted-foreground">{activity.detail}</p>
-                    </div>
-                  </div>
-                  <span className="text-xs text-muted-foreground font-medium">{activity.time}</span>
-                </li>
-              ))}
-              {stats.recentActivity.length === 0 && (
+                    <span className="text-xs text-muted-foreground font-medium">{activity.time}</span>
+                  </li>
+                ))
+              ) : (
                 <li className="p-8 text-center text-muted-foreground text-sm">
                   No recent activity found.
                 </li>
