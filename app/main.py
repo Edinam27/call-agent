@@ -271,11 +271,9 @@ async def voice_stream(websocket: WebSocket):
 # ALWAYS registers these routes, even if the directory isn't created 
 # at the exact millisecond the Python file is loaded by Uvicorn.
 
-# Mount the assets directory directly
-assets_dir = os.path.join(frontend_dist, "assets")
-# Create the directory if it doesn't exist yet to prevent mount errors
-os.makedirs(assets_dir, exist_ok=True)
-app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+# Mount the frontend dist directory to serve static files correctly
+if os.path.exists(frontend_dist):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_index():
