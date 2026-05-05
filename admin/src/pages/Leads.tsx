@@ -8,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL || '';
 interface Lead {
   id: number;
   name: string;
+  email: string;
   contact_info: string;
   program_of_interest: string;
   highest_degree: string;
@@ -79,13 +80,22 @@ export default function Leads() {
                         </div>
                         <div>
                           <p className="text-sm font-medium text-foreground">{lead.name || 'Unknown'}</p>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            {lead.contact_info?.includes('@') ? (
-                              <Mail className="w-3 h-3 text-muted-foreground" />
-                            ) : (
-                              <Phone className="w-3 h-3 text-muted-foreground" />
+                          <div className="flex flex-col mt-0.5 space-y-1">
+                            {lead.email && (
+                              <div className="flex items-center gap-1">
+                                <Mail className="w-3 h-3 text-muted-foreground" />
+                                <p className="text-xs text-muted-foreground">{lead.email}</p>
+                              </div>
                             )}
-                            <p className="text-xs text-muted-foreground">{lead.contact_info || 'Not provided'}</p>
+                            {lead.contact_info && !lead.contact_info.includes('session-') && (
+                              <div className="flex items-center gap-1">
+                                <Phone className="w-3 h-3 text-muted-foreground" />
+                                <p className="text-xs text-muted-foreground">{lead.contact_info}</p>
+                              </div>
+                            )}
+                            {!lead.email && (!lead.contact_info || lead.contact_info.includes('session-')) && (
+                               <p className="text-xs text-muted-foreground">Not provided</p>
+                            )}
                           </div>
                         </div>
                       </div>

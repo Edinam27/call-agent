@@ -20,6 +20,9 @@ interface Message {
 }
 
 function App() {
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -30,7 +33,37 @@ function App() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
   const sessionIdRef = useRef(`session-${Math.random().toString(36).substring(7)}`);
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userName.trim() || !userEmail.trim()) return;
+
+    setIsRegistering(true);
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "";
+      const response = await fetch(`${apiUrl}/api/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionIdRef.current,
+          name: userName,
+          email: userEmail
+        }),
+      });
+      
+      if (response.ok) {
+        setIsRegistered(true);
+      } else {
+        console.error("Registration failed");
+      }
+    } catch (error) {
+      console.error("Failed to register:", error);
+    } finally {
+      setIsRegistering(false);
+    }
+  };
 
   const handleMicrophoneClick = () => {
     if (!('webkitSpeechRecognition' in window)) {
@@ -118,6 +151,49 @@ function App() {
       setIsLoading(false);
     }
   };
+
+  if (!isRegistered) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-muted/30 p-4">
+        <div className="w-full max-w-md border border-border bg-card text-card-foreground rounded-lg flex flex-col shadow-xl p-8">
+          <div className="flex justify-center mb-6">
+            <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center overflow-hidden">
+              <img src={kojoAvatar} alt="Kojo" className="h-full w-full object-cover" />
+            </div>
+          </div>
+          <h1 className="font-semibold text-2xl mb-2 text-center">UPSA SOGS Chat</h1>
+          <p className="text-sm text-muted-foreground mb-8 text-center">Please provide your details to start chatting with Kojo, our AI Admissions Assistant.</p>
+          <form onSubmit={handleRegister} className="flex flex-col gap-5">
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Full Name</label>
+              <input 
+                type="text" 
+                required 
+                value={userName} 
+                onChange={e => setUserName(e.target.value)}
+                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                placeholder="John Doe"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Email Address</label>
+              <input 
+                type="email" 
+                required 
+                value={userEmail} 
+                onChange={e => setUserEmail(e.target.value)}
+                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                placeholder="john@example.com"
+              />
+            </div>
+            <Button type="submit" className="w-full mt-4" disabled={isRegistering}>
+              {isRegistering ? "Connecting..." : "Start Chat"}
+            </Button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted/30 p-4">

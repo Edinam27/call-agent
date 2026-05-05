@@ -25,6 +25,28 @@ app.add_middleware(
 
 llm_service = LLMService()
 
+from pydantic import BaseModel
+
+class RegisterRequest(BaseModel):
+    session_id: str
+    name: str
+    email: str
+
+@app.post("/api/register")
+async def register_user(request: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    result_lead = await db.execute(select(Lead).where(Lead.phone_number == request.session_id))
+    lead = result_lead.scalars().first()
+    
+    if not lead:
+        lead = Lead(phone_number=request.session_id, name=request.name, email=request.email)
+        db.add(lead)
+    else:
+        lead.name = request.name
+        lead.email = request.email
+        
+    await db.commit()
+    return {"status": "success"}
+
 @app.get("/api/admin/leads")
 async def get_admin_leads(db: AsyncSession = Depends(get_db)):
     """Fetch all leads for the admin dashboard"""
@@ -35,6 +57,7 @@ async def get_admin_leads(db: AsyncSession = Depends(get_db)):
         {
             "id": lead.id,
             "name": lead.name,
+            "email": lead.email,
             "contact_info": lead.phone_number,
             "program_of_interest": lead.program_interest,
             "highest_degree": lead.degree_level,
